@@ -24,9 +24,9 @@ type Decoder struct {
 	r   reader
 }
 
-// Create a new indexing JSON decoder
-func NewDecoder(r io.Reader) *Decoder {
-	dec := &Decoder{r: reader{r: r}}
+// Create a new indexing JSON decoder with an initial read offset
+func NewDecoder(r io.Reader, offset int64) *Decoder {
+	dec := &Decoder{r: reader{r: r, n: offset}}
 	dec.dec = json.NewDecoder(&dec.r)
 	return dec
 }

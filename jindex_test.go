@@ -10,7 +10,7 @@ import (
 func TestReadString(t *testing.T) {
 	var str string
 	r := strings.NewReader("\"str\"")
-	d := NewDecoder(r)
+	d := NewDecoder(r, 0)
 	if off := d.Offset(); off != 0 {
 		t.Fatal("expected 0, got", off)
 	}
@@ -50,12 +50,13 @@ func readValueAt(t *testing.T, path string, off *int64, v interface{}) {
 		t.Fatal("n != off")
 	}
 
-	d := NewDecoder(f)
+	d := NewDecoder(f, *off)
 	if err := d.Decode(v); err != nil {
 		t.Fatal(err)
 	}
-
-	*off = d.Offset()
+	newOff := d.Offset()
+	t.Logf("read %v, %v\n", *off, newOff)
+	*off = newOff
 }
 
 func readTestSequence(t *testing.T, path string) {
@@ -71,18 +72,31 @@ func readTestSequence(t *testing.T, path string) {
 		t.Fatalf("expected \"foo\", got \"%v\"\n", str)
 	}
 
+	t.Log("got foo")
 	readValueAt(t, path, &off, &i)
 	if i != 123 {
 		t.Fatalf("expected 123, got %v\n", i)
 	}
 
+	t.Log("got 123")
 	readValueAt(t, path, &off, &nv)
 	if nv.Name != "value" {
 		t.Fatalf("expected \"value\", got \"%v\"\n", nv.Name)
 	}
 
+	t.Log("got struct")
 	readValueAt(t, path, &off, &str)
 	if str != "bar" {
 		t.Fatalf("expected \"bar\", got \"%v\"\n", str)
 	}
+
+	t.Log("got bar")
+}
+
+func TestReadNoWhitespace(t *testing.T) {
+	readTestSequence(t, "testdata/t0.json")
+}
+
+func TestReadWithWhitespace(t *testing.T) {
+	readTestSequence(t, "testdata/t1.json")
 }

@@ -18,9 +18,9 @@ JSON decoder keeping track of the read offset
 #### func  NewDecoder
 
 ```go
-func NewDecoder(r io.Reader) *Decoder
+func NewDecoder(r io.Reader, offset int64) *Decoder
 ```
-Create a new indexing JSON decoder
+Create a new indexing JSON decoder with an initial read offset
 
 #### func (*Decoder) Decode
 
