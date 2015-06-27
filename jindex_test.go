@@ -10,8 +10,8 @@ import (
 func TestReadString(t *testing.T) {
 	var str string
 	r := strings.NewReader("\"str\"")
-	d := NewDecoder(r, 0)
-	if off := d.Offset(); off != 0 {
+	d := NewDecoder(r)
+	if off := d.NRead(); off != 0 {
 		t.Fatal("expected 0, got", off)
 	}
 
@@ -23,7 +23,7 @@ func TestReadString(t *testing.T) {
 		t.Fatalf("expected \"str\", got \"%v\"\n", str)
 	}
 
-	if off := d.Offset(); off != int64(len("\"str\"")) {
+	if off := d.NRead(); off != int64(len("\"str\"")) {
 		t.Fatalf("expected len %v, got %v\n", len("\"str\""), off)
 	}
 
@@ -50,11 +50,11 @@ func readValueAt(t *testing.T, path string, off *int64, v interface{}) {
 		t.Fatal("n != off")
 	}
 
-	d := NewDecoder(f, *off)
+	d := NewDecoder(f)
 	if err := d.Decode(v); err != nil {
 		t.Fatal(err)
 	}
-	newOff := d.Offset()
+	newOff := *off + d.NRead()
 	t.Logf("read %v, %v\n", *off, newOff)
 	*off = newOff
 }

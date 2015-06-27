@@ -13,14 +13,14 @@ type Decoder struct {
 }
 ```
 
-JSON decoder keeping track of the read offset
+JSON decoder keeping track of the number of read bytes
 
 #### func  NewDecoder
 
 ```go
-func NewDecoder(r io.Reader, offset int64) *Decoder
+func NewDecoder(r io.Reader) *Decoder
 ```
-Create a new indexing JSON decoder with an initial read offset
+Create a new JSON decoder, keeping track of the number of read bytes
 
 #### func (*Decoder) Decode
 
@@ -29,9 +29,9 @@ func (d *Decoder) Decode(v interface{}) error
 ```
 Read the next JSON-encoded value and store it in the value pointed to by v
 
-#### func (*Decoder) Offset
+#### func (*Decoder) NRead
 
 ```go
-func (d *Decoder) Offset() int64
+func (d *Decoder) NRead() int64
 ```
-Return the offset past the end of the last read JSON value in the read stream
+Return the number of bytes read by this decoder

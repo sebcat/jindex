@@ -18,21 +18,21 @@ func (r *reader) Read(p []byte) (n int, err error) {
 	return
 }
 
-// JSON decoder keeping track of the read offset
+// JSON decoder keeping track of the number of read bytes
 type Decoder struct {
 	dec *json.Decoder
 	r   reader
 }
 
-// Create a new indexing JSON decoder with an initial read offset
-func NewDecoder(r io.Reader, offset int64) *Decoder {
-	dec := &Decoder{r: reader{r: r, n: offset}}
+// Create a new JSON decoder, keeping track of the number of read bytes
+func NewDecoder(r io.Reader) *Decoder {
+	dec := &Decoder{r: reader{r: r}}
 	dec.dec = json.NewDecoder(&dec.r)
 	return dec
 }
 
-// Return the offset past the end of the last read JSON value in the read stream
-func (d *Decoder) Offset() int64 {
+// Return the number of bytes read by this decoder
+func (d *Decoder) NRead() int64 {
 	r := d.dec.Buffered().(*bytes.Reader)
 	return d.r.n - int64(r.Len())
 }
